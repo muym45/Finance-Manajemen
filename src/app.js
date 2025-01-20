@@ -1,26 +1,28 @@
-// Import library yang dibutuhkan
-const express = require('express');
-const dotenv = require('dotenv');
-const connectDB = require('./config/db');
+// Import library yang diperlukan
+const express = require('express'); // Framework untuk membuat API
+const dotenv = require('dotenv'); // Untuk membaca file .env
+const connectDB = require('./config/db'); // Fungsi untuk koneksi ke database
 
-// Konfigurasi dotenv agar membaca dari variable .env
+// Konfigurasi dotenv agar membaca variabel lingkungan dari .env
 dotenv.config();
 
-//Middleware untuk parsing JSON pada request body
-const app = express()
+// Inisialisasi Express
+const app = express();
 
-//Import rute API
+// Middleware untuk parsing JSON pada request body
+app.use(express.json());
+
+// Import rute API
 const userRoutes = require('./routes/userRoutes');
 const financeRoutes = require('./routes/financeRoutes');
 
-//Gunakan route API
+// Gunakan rute API
 app.use('/api/users', userRoutes);
-app.use('/api/finance', financeRoutes);
+app.use('/api/finances', financeRoutes);
 
-//port Aplikasi
+// Port aplikasi
 const PORT = process.env.PORT || 5000;
 
-//Jalakan server
-app.listen(PORT, () => 
-    console.log(`Server berjalan di port ${PORT}`)
-)
+// Jalankan server
+app.listen(PORT, () => console.log(`Server berjalan di port ${PORT}`));
+connectDB();
