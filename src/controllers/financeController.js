@@ -6,7 +6,13 @@ const getFinances = async (req, res) => {
   try {
     // Cari semua data finance milik user yang sedang login
     const finances = await Finance.find({ user: req.user.id });
-    res.status(200).json(finances);
+
+    // Hitung Total Incomes, Total Expenses, dan Balance
+    const totalIncomes = finances.filter(finance => finance.type === 'income').reduce((sum, finance) => sum + finance.amount, 0);
+    const totalExpenses = finances.filter(finance => finance.type === 'expense').reduce((sum, finance) => sum + finance.amount, 0);
+    const balance = totalIncomes - totalExpenses;
+
+    res.status(200).json({ finances, totalIncomes, totalExpenses, balance });
   } catch (error) {
     res.status(500).json({ message: 'Terjadi kesalahan server' });
   }
@@ -76,7 +82,7 @@ const deleteFinance = async (req, res) => {
     }
 
     // Hapus data finance
-    await finance.remove();
+    await finance.deleteOne();
     res.status(200).json({ message: 'Data berhasil dihapus' });
   } catch (error) {
     res.status(500).json({ message: 'Gagal menghapus data finance' });
